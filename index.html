@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculator with Currency Converter</title>
+    <title>Calculator, Currency Converter & Notepad</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <h1>Calculator & Currency Converter</h1>
+        <h1>Calculator, Currency Converter & Notepad</h1>
         
         <div class="app-wrapper">
             <!-- Calculator Section -->
@@ -71,6 +71,65 @@
                     </div>
                     <button class="btn-convert" onclick="convertCurrency()">Convert</button>
                 </div>
+            </div>
+        </div>
+
+        <!-- Second Row: Notepad and Sidebar -->
+        <div class="app-wrapper-second">
+            <!-- Notepad Section -->
+            <div class="notepad-section">
+                <h2>📝 Notepad</h2>
+                <div class="filename-section">
+                    <label for="filenameInput">File name (optional):</label>
+                    <input type="text" id="filenameInput" placeholder="Enter file name (e.g., my-note)">
+                </div>
+                <div class="input-section">
+                    <label for="textInput">Enter your text:</label>
+                    <textarea id="textInput" placeholder="Type your text here..."></textarea>
+                </div>
+                <div class="button-group">
+                    <button class="save-button" id="saveButton">💾 Save Text</button>
+                    <button class="clear-button" id="clearButton">🗑️ Clear</button>
+                </div>
+                <div class="message" id="message"></div>
+            </div>
+
+            <!-- Sidebar with Clock and Calendar -->
+            <div class="sidebar">
+                <!-- Clock Section -->
+                <div class="clock-panel">
+                    <h2>🕐 Current Time</h2>
+                    <div class="clock">
+                        <div class="time" id="time">00:00:00</div>
+                        <div class="date" id="date"></div>
+                    </div>
+                </div>
+
+                <!-- Calendar Section -->
+                <div class="calendar-panel">
+                    <h2>📅 Calendar</h2>
+                    <div class="calendar-header" id="calendarHeader"></div>
+                    <div class="calendar">
+                        <div class="calendar-grid" id="calendarGrid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for date notes -->
+    <div class="modal" id="noteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalDateTitle">Note for Date</h2>
+                <button class="close-button" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <textarea id="dateNoteInput" placeholder="Enter your note for this date..."></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-button cancel" id="cancelNote">Cancel</button>
+                <button class="modal-button save" id="saveDateNote">Save Note</button>
             </div>
         </div>
     </div>
