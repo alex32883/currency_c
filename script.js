@@ -45,6 +45,31 @@ function appendDecimal() {
 }
 
 function appendOperator(op) {
+    // Special handling for percentage - calculate immediately
+    if (op === '%') {
+        if (previousInput !== '' && operator !== '') {
+            // Calculate percentage: (previous * current) / 100
+            const prev = parseFloat(previousInput);
+            const current = parseFloat(currentInput);
+            const result = (prev * current) / 100;
+            const roundedResult = Math.round(result * 100000000) / 100000000;
+            currentInput = roundedResult.toString();
+            previousInput = '';
+            operator = '';
+            shouldResetDisplay = true;
+            updateDisplay();
+        } else if (currentInput !== '0') {
+            // If no previous input, treat as percentage of current number (e.g., 50% = 0.5)
+            const current = parseFloat(currentInput);
+            const result = current / 100;
+            const roundedResult = Math.round(result * 100000000) / 100000000;
+            currentInput = roundedResult.toString();
+            shouldResetDisplay = true;
+            updateDisplay();
+        }
+        return;
+    }
+    
     if (previousInput !== '' && operator !== '') {
         calculate();
     }
