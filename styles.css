@@ -130,7 +130,6 @@ h2 {
 .btn-equals {
     background: #764ba2;
     color: white;
-    grid-row: span 2;
 }
 
 .btn-equals:hover {

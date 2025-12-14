@@ -82,7 +82,7 @@ function calculate() {
             result = prev / current;
             break;
         case '%':
-            result = prev % current;
+            result = (prev * current) / 100;
             break;
         default:
             return;
