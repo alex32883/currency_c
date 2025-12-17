@@ -72,6 +72,42 @@
                     <button class="btn-convert" onclick="convertCurrency()">Convert</button>
                 </div>
             </div>
+
+            <!-- Weather Section -->
+            <div class="weather-section">
+                <h2>🌤️ Weather</h2>
+                <div class="weather-content">
+                    <div class="weather-location">Point-Claire, QC</div>
+                    <div class="weather-main">
+                        <div class="weather-temp" id="weatherTemp">--°C</div>
+                        <div class="weather-desc" id="weatherDesc">Loading...</div>
+                    </div>
+                    <div class="weather-details">
+                        <div class="weather-detail-item">
+                            <span class="weather-label">Feels like:</span>
+                            <span class="weather-value" id="weatherFeelsLike">--°C</span>
+                        </div>
+                        <div class="weather-detail-item">
+                            <span class="weather-label">Humidity:</span>
+                            <span class="weather-value" id="weatherHumidity">--%</span>
+                        </div>
+                        <div class="weather-detail-item">
+                            <span class="weather-label">Wind:</span>
+                            <span class="weather-value" id="weatherWind">-- km/h</span>
+                        </div>
+                    </div>
+                    <button class="btn-refresh-weather" onclick="fetchWeather()">🔄 Refresh</button>
+                </div>
+            </div>
+
+            <!-- Istanbul Time Section -->
+            <div class="istanbul-time-section">
+                <h2>🕐 Istanbul Time</h2>
+                <div class="istanbul-time-content">
+                    <div class="istanbul-time" id="istanbulTime">00:00:00</div>
+                    <div class="istanbul-date" id="istanbulDate"></div>
+                </div>
+            </div>
         </div>
 
         <!-- Second Row: Notepad and Sidebar -->

@@ -594,3 +594,120 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+// ==================== Weather Functionality ====================
+// Using OpenWeatherMap API (free tier requires API key)
+// You can get a free API key at: https://openweathermap.org/api
+// For demo purposes, using a free alternative API
+async function fetchWeather() {
+    const weatherTemp = document.getElementById('weatherTemp');
+    const weatherDesc = document.getElementById('weatherDesc');
+    const weatherFeelsLike = document.getElementById('weatherFeelsLike');
+    const weatherHumidity = document.getElementById('weatherHumidity');
+    const weatherWind = document.getElementById('weatherWind');
+    
+    // Point-Claire, QC coordinates: 45.4487° N, 73.8169° W
+    // Using Open-Meteo free API (no API key required)
+    try {
+        const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=45.4487&longitude=-73.8169&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&timezone=America/Toronto');
+        const data = await response.json();
+        
+        if (data && data.current) {
+            const current = data.current;
+            const temp = Math.round(current.temperature_2m);
+            const feelsLike = Math.round(current.temperature_2m); // Open-Meteo doesn't provide feels_like, using temp
+            const humidity = current.relative_humidity_2m;
+            const windSpeed = Math.round(current.wind_speed_10m * 3.6); // Convert m/s to km/h
+            const weatherCode = current.weather_code;
+            
+            // Weather code descriptions (simplified)
+            const weatherDescriptions = {
+                0: 'Clear sky',
+                1: 'Mainly clear',
+                2: 'Partly cloudy',
+                3: 'Overcast',
+                45: 'Foggy',
+                48: 'Depositing rime fog',
+                51: 'Light drizzle',
+                53: 'Moderate drizzle',
+                55: 'Dense drizzle',
+                61: 'Slight rain',
+                63: 'Moderate rain',
+                65: 'Heavy rain',
+                71: 'Slight snow',
+                73: 'Moderate snow',
+                75: 'Heavy snow',
+                80: 'Slight rain showers',
+                81: 'Moderate rain showers',
+                82: 'Violent rain showers',
+                85: 'Slight snow showers',
+                86: 'Heavy snow showers',
+                95: 'Thunderstorm',
+                96: 'Thunderstorm with hail'
+            };
+            
+            const description = weatherDescriptions[weatherCode] || 'Unknown';
+            
+            if (weatherTemp) weatherTemp.textContent = `${temp}°C`;
+            if (weatherDesc) weatherDesc.textContent = description;
+            if (weatherFeelsLike) weatherFeelsLike.textContent = `${feelsLike}°C`;
+            if (weatherHumidity) weatherHumidity.textContent = `${humidity}%`;
+            if (weatherWind) weatherWind.textContent = `${windSpeed} km/h`;
+        }
+    } catch (error) {
+        console.error('Error fetching weather:', error);
+        if (weatherDesc) weatherDesc.textContent = 'Unable to load weather';
+        if (weatherTemp) weatherTemp.textContent = '--°C';
+        if (weatherFeelsLike) weatherFeelsLike.textContent = '--°C';
+        if (weatherHumidity) weatherHumidity.textContent = '--%';
+        if (weatherWind) weatherWind.textContent = '-- km/h';
+    }
+}
+
+// ==================== Istanbul Time Functionality ====================
+function updateIstanbulTime() {
+    const istanbulTimeElement = document.getElementById('istanbulTime');
+    const istanbulDateElement = document.getElementById('istanbulDate');
+    
+    if (!istanbulTimeElement || !istanbulDateElement) return;
+    
+    try {
+        // Get current time in Istanbul (Europe/Istanbul timezone)
+        const now = new Date();
+        const istanbulTime = new Intl.DateTimeFormat('en-US', {
+            timeZone: 'Europe/Istanbul',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+        }).format(now);
+        
+        const istanbulDate = new Intl.DateTimeFormat('en-US', {
+            timeZone: 'Europe/Istanbul',
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        }).format(now);
+        
+        istanbulTimeElement.textContent = istanbulTime;
+        istanbulDateElement.textContent = istanbulDate;
+    } catch (error) {
+        console.error('Error updating Istanbul time:', error);
+        istanbulTimeElement.textContent = '00:00:00';
+        istanbulDateElement.textContent = 'Error loading time';
+    }
+}
+
+// Initialize weather and Istanbul time on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Fetch weather immediately
+    fetchWeather();
+    
+    // Update Istanbul time immediately and then every second
+    updateIstanbulTime();
+    setInterval(updateIstanbulTime, 1000);
+    
+    // Refresh weather every 10 minutes
+    setInterval(fetchWeather, 600000);
+});
+
