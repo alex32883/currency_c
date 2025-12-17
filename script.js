@@ -514,3 +514,83 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+// ==================== Payment Calculator Functionality ====================
+function calculatePayment() {
+    const hourlyRate = parseFloat(document.getElementById('hourlyRate').value);
+    const startTime = document.getElementById('startTime').value;
+    const endTime = document.getElementById('endTime').value;
+    
+    // Validate inputs
+    if (isNaN(hourlyRate) || hourlyRate < 0) {
+        alert('Please enter a valid hourly rate');
+        return;
+    }
+    
+    if (!startTime || !endTime) {
+        alert('Please enter both start time and end time');
+        return;
+    }
+    
+    // Parse times
+    const startParts = startTime.split(':');
+    const endParts = endTime.split(':');
+    
+    const startHours = parseInt(startParts[0]);
+    const startMinutes = parseInt(startParts[1]);
+    const endHours = parseInt(endParts[0]);
+    const endMinutes = parseInt(endParts[1]);
+    
+    // Convert to minutes for easier calculation
+    const startTotalMinutes = startHours * 60 + startMinutes;
+    const endTotalMinutes = endHours * 60 + endMinutes;
+    
+    // Calculate difference
+    let totalMinutes = endTotalMinutes - startTotalMinutes;
+    
+    // Handle case where end time is next day (e.g., working overnight)
+    if (totalMinutes < 0) {
+        totalMinutes += 24 * 60; // Add 24 hours
+    }
+    
+    // Convert to hours and minutes
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    
+    // Convert to decimal hours for calculation
+    const decimalHours = hours + (minutes / 60);
+    
+    // Calculate payment
+    const payment = hourlyRate * decimalHours;
+    
+    // Display results
+    const timeWorkedElement = document.getElementById('timeWorked');
+    const paymentAmountElement = document.getElementById('paymentAmount');
+    
+    if (timeWorkedElement) {
+        timeWorkedElement.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+    }
+    
+    if (paymentAmountElement) {
+        paymentAmountElement.textContent = `$${payment.toFixed(2)}`;
+    }
+}
+
+// Auto-calculate when inputs change
+document.addEventListener('DOMContentLoaded', function() {
+    const hourlyRate = document.getElementById('hourlyRate');
+    const startTime = document.getElementById('startTime');
+    const endTime = document.getElementById('endTime');
+    
+    if (hourlyRate) {
+        hourlyRate.addEventListener('input', calculatePayment);
+    }
+    
+    if (startTime) {
+        startTime.addEventListener('change', calculatePayment);
+    }
+    
+    if (endTime) {
+        endTime.addEventListener('change', calculatePayment);
+    }
+});
+

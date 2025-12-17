@@ -115,6 +115,34 @@
                 </div>
             </div>
         </div>
+
+        <!-- Third Row: Payment Calculator -->
+        <div class="app-wrapper-third">
+            <div class="payment-calculator-section">
+                <h2>💰 Payment Calculator</h2>
+                <div class="payment-calculator">
+                    <div class="payment-input-group">
+                        <label for="hourlyRate">Hourly Rate ($):</label>
+                        <input type="number" id="hourlyRate" placeholder="Enter hourly rate" step="0.01" min="0" value="0">
+                    </div>
+                    <div class="payment-input-group">
+                        <label for="startTime">Start Time:</label>
+                        <input type="time" id="startTime">
+                    </div>
+                    <div class="payment-input-group">
+                        <label for="endTime">End Time:</label>
+                        <input type="time" id="endTime">
+                    </div>
+                    <button class="btn-calculate-payment" onclick="calculatePayment()">Calculate Payment</button>
+                    <div class="payment-result">
+                        <div class="result-label">Time Worked:</div>
+                        <div class="result-value" id="timeWorked">--:--</div>
+                        <div class="result-label">Amount to be Paid:</div>
+                        <div class="result-amount" id="paymentAmount">$0.00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Modal for date notes -->
