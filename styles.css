@@ -41,8 +41,9 @@ h1 {
 .calculator-section,
 .converter-section,
 .weather-section,
-.istanbul-time-section,
+.world-time-section,
 .notepad-section,
+.payment-calculator-section,
 .clock-panel,
 .calendar-panel {
     background: white;
@@ -657,61 +658,69 @@ textarea:focus {
     transform: translateY(-2px);
 }
 
-/* Istanbul Time Section Styles */
-.istanbul-time-content {
+/* World Time Section Styles */
+.world-time-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 10px 0;
+}
+
+.time-zone-item {
     text-align: center;
-    padding: 20px 0;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
 }
 
-.istanbul-time {
-    font-size: 42px;
-    font-weight: bold;
+.time-zone-label {
+    font-size: 14px;
+    font-weight: 600;
     color: #667eea;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.istanbul-date {
-    font-size: 16px;
+.time-zone-time {
+    font-size: 28px;
+    font-weight: bold;
+    color: #764ba2;
+    margin-bottom: 5px;
+}
+
+.time-zone-date {
+    font-size: 12px;
     color: #666;
 }
 
 /* Payment Calculator Styles */
-.app-wrapper-third {
-    margin-top: 30px;
-}
-
-.payment-calculator-section {
-    background: white;
-    border-radius: 20px;
-    padding: 25px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-}
-
 .payment-calculator {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 12px;
 }
 
 .payment-input-group {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 5px;
 }
 
 .payment-input-group label {
     color: #555;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .payment-input-group input[type="number"],
 .payment-input-group input[type="time"] {
     width: 100%;
-    padding: 12px;
+    padding: 8px;
     border: 2px solid #e0e0e0;
     border-radius: 8px;
-    font-size: 16px;
+    font-size: 14px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     transition: border-color 0.3s;
 }
@@ -723,16 +732,16 @@ textarea:focus {
 }
 
 .btn-calculate-payment {
-    height: 50px;
-    font-size: 1.2em;
+    height: 40px;
+    font-size: 0.9em;
     border: none;
-    border-radius: 10px;
+    border-radius: 8px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     cursor: pointer;
     font-weight: 600;
     transition: all 0.3s ease;
-    padding: 15px;
+    padding: 10px;
 }
 
 .btn-calculate-payment:hover {
@@ -746,31 +755,31 @@ textarea:focus {
 
 .payment-result {
     background: #f8f9fa;
-    border-radius: 10px;
-    padding: 20px;
+    border-radius: 8px;
+    padding: 12px;
     text-align: center;
     border: 2px solid #e0e0e0;
 }
 
 .result-label {
-    font-size: 14px;
+    font-size: 11px;
     color: #666;
-    margin-bottom: 5px;
+    margin-bottom: 3px;
     font-weight: 600;
 }
 
 .result-value {
-    font-size: 24px;
+    font-size: 18px;
     color: #667eea;
     font-weight: bold;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
 .result-amount {
-    font-size: 32px;
+    font-size: 22px;
     color: #764ba2;
     font-weight: bold;
-    margin-top: 10px;
+    margin-top: 5px;
 }
 
 /* Responsive Design */

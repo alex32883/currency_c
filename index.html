@@ -100,12 +100,25 @@
                 </div>
             </div>
 
-            <!-- Istanbul Time Section -->
-            <div class="istanbul-time-section">
-                <h2>🕐 Istanbul Time</h2>
-                <div class="istanbul-time-content">
-                    <div class="istanbul-time" id="istanbulTime">00:00:00</div>
-                    <div class="istanbul-date" id="istanbulDate"></div>
+            <!-- World Time Section -->
+            <div class="world-time-section">
+                <h2>🕐 World Time</h2>
+                <div class="world-time-content">
+                    <div class="time-zone-item">
+                        <div class="time-zone-label">Istanbul</div>
+                        <div class="time-zone-time" id="istanbulTime">00:00:00</div>
+                        <div class="time-zone-date" id="istanbulDate"></div>
+                    </div>
+                    <div class="time-zone-item">
+                        <div class="time-zone-label">Athens</div>
+                        <div class="time-zone-time" id="athensTime">00:00:00</div>
+                        <div class="time-zone-date" id="athensDate"></div>
+                    </div>
+                    <div class="time-zone-item">
+                        <div class="time-zone-label">Ottawa</div>
+                        <div class="time-zone-time" id="ottawaTime">00:00:00</div>
+                        <div class="time-zone-date" id="ottawaDate"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -130,14 +143,31 @@
                 <div class="message" id="message"></div>
             </div>
 
-            <!-- Sidebar with Clock and Calendar -->
+            <!-- Sidebar with Payment Calculator and Calendar -->
             <div class="sidebar">
-                <!-- Clock Section -->
-                <div class="clock-panel">
-                    <h2>🕐 Current Time</h2>
-                    <div class="clock">
-                        <div class="time" id="time">00:00:00</div>
-                        <div class="date" id="date"></div>
+                <!-- Payment Calculator Section -->
+                <div class="payment-calculator-section">
+                    <h2>💰 Payment Calculator</h2>
+                    <div class="payment-calculator">
+                        <div class="payment-input-group">
+                            <label for="hourlyRate">Hourly Rate ($):</label>
+                            <input type="number" id="hourlyRate" placeholder="Enter hourly rate" step="0.01" min="0" value="0">
+                        </div>
+                        <div class="payment-input-group">
+                            <label for="startTime">Start Time:</label>
+                            <input type="time" id="startTime">
+                        </div>
+                        <div class="payment-input-group">
+                            <label for="endTime">End Time:</label>
+                            <input type="time" id="endTime">
+                        </div>
+                        <button class="btn-calculate-payment" onclick="calculatePayment()">Calculate Payment</button>
+                        <div class="payment-result">
+                            <div class="result-label">Time Worked:</div>
+                            <div class="result-value" id="timeWorked">--:--</div>
+                            <div class="result-label">Amount to be Paid:</div>
+                            <div class="result-amount" id="paymentAmount">$0.00</div>
+                        </div>
                     </div>
                 </div>
 
@@ -152,33 +182,6 @@
             </div>
         </div>
 
-        <!-- Third Row: Payment Calculator -->
-        <div class="app-wrapper-third">
-            <div class="payment-calculator-section">
-                <h2>💰 Payment Calculator</h2>
-                <div class="payment-calculator">
-                    <div class="payment-input-group">
-                        <label for="hourlyRate">Hourly Rate ($):</label>
-                        <input type="number" id="hourlyRate" placeholder="Enter hourly rate" step="0.01" min="0" value="0">
-                    </div>
-                    <div class="payment-input-group">
-                        <label for="startTime">Start Time:</label>
-                        <input type="time" id="startTime">
-                    </div>
-                    <div class="payment-input-group">
-                        <label for="endTime">End Time:</label>
-                        <input type="time" id="endTime">
-                    </div>
-                    <button class="btn-calculate-payment" onclick="calculatePayment()">Calculate Payment</button>
-                    <div class="payment-result">
-                        <div class="result-label">Time Worked:</div>
-                        <div class="result-value" id="timeWorked">--:--</div>
-                        <div class="result-label">Amount to be Paid:</div>
-                        <div class="result-amount" id="paymentAmount">$0.00</div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 
     <!-- Modal for date notes -->

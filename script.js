@@ -208,27 +208,6 @@ document.addEventListener('keydown', function(event) {
     }
 });
 
-// ==================== Clock Functionality ====================
-function updateClock() {
-    const now = new Date();
-    const time = now.toLocaleTimeString('en-US', { hour12: false });
-    const date = now.toLocaleDateString('en-US', { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-    });
-    
-    const timeElement = document.getElementById('time');
-    const dateElement = document.getElementById('date');
-    
-    if (timeElement) timeElement.textContent = time;
-    if (dateElement) dateElement.textContent = date;
-}
-
-// Update clock every second
-setInterval(updateClock, 1000);
-updateClock();
 
 // ==================== Calendar Functionality ====================
 // Store notes data in localStorage
@@ -663,49 +642,103 @@ async function fetchWeather() {
     }
 }
 
-// ==================== Istanbul Time Functionality ====================
-function updateIstanbulTime() {
-    const istanbulTimeElement = document.getElementById('istanbulTime');
-    const istanbulDateElement = document.getElementById('istanbulDate');
+// ==================== World Time Functionality ====================
+function updateWorldTimes() {
+    const now = new Date();
     
-    if (!istanbulTimeElement || !istanbulDateElement) return;
-    
+    // Update Istanbul time
     try {
-        // Get current time in Istanbul (Europe/Istanbul timezone)
-        const now = new Date();
-        const istanbulTime = new Intl.DateTimeFormat('en-US', {
-            timeZone: 'Europe/Istanbul',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: false
-        }).format(now);
+        const istanbulTimeElement = document.getElementById('istanbulTime');
+        const istanbulDateElement = document.getElementById('istanbulDate');
         
-        const istanbulDate = new Intl.DateTimeFormat('en-US', {
-            timeZone: 'Europe/Istanbul',
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        }).format(now);
-        
-        istanbulTimeElement.textContent = istanbulTime;
-        istanbulDateElement.textContent = istanbulDate;
+        if (istanbulTimeElement && istanbulDateElement) {
+            const istanbulTime = new Intl.DateTimeFormat('en-US', {
+                timeZone: 'Europe/Istanbul',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            }).format(now);
+            
+            const istanbulDate = new Intl.DateTimeFormat('en-US', {
+                timeZone: 'Europe/Istanbul',
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric'
+            }).format(now);
+            
+            istanbulTimeElement.textContent = istanbulTime;
+            istanbulDateElement.textContent = istanbulDate;
+        }
     } catch (error) {
         console.error('Error updating Istanbul time:', error);
-        istanbulTimeElement.textContent = '00:00:00';
-        istanbulDateElement.textContent = 'Error loading time';
+    }
+    
+    // Update Athens time
+    try {
+        const athensTimeElement = document.getElementById('athensTime');
+        const athensDateElement = document.getElementById('athensDate');
+        
+        if (athensTimeElement && athensDateElement) {
+            const athensTime = new Intl.DateTimeFormat('en-US', {
+                timeZone: 'Europe/Athens',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            }).format(now);
+            
+            const athensDate = new Intl.DateTimeFormat('en-US', {
+                timeZone: 'Europe/Athens',
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric'
+            }).format(now);
+            
+            athensTimeElement.textContent = athensTime;
+            athensDateElement.textContent = athensDate;
+        }
+    } catch (error) {
+        console.error('Error updating Athens time:', error);
+    }
+    
+    // Update Ottawa time
+    try {
+        const ottawaTimeElement = document.getElementById('ottawaTime');
+        const ottawaDateElement = document.getElementById('ottawaDate');
+        
+        if (ottawaTimeElement && ottawaDateElement) {
+            const ottawaTime = new Intl.DateTimeFormat('en-US', {
+                timeZone: 'America/Toronto',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            }).format(now);
+            
+            const ottawaDate = new Intl.DateTimeFormat('en-US', {
+                timeZone: 'America/Toronto',
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric'
+            }).format(now);
+            
+            ottawaTimeElement.textContent = ottawaTime;
+            ottawaDateElement.textContent = ottawaDate;
+        }
+    } catch (error) {
+        console.error('Error updating Ottawa time:', error);
     }
 }
 
-// Initialize weather and Istanbul time on page load
+// Initialize weather and world times on page load
 document.addEventListener('DOMContentLoaded', function() {
     // Fetch weather immediately
     fetchWeather();
     
-    // Update Istanbul time immediately and then every second
-    updateIstanbulTime();
-    setInterval(updateIstanbulTime, 1000);
+    // Update world times immediately and then every second
+    updateWorldTimes();
+    setInterval(updateWorldTimes, 1000);
     
     // Refresh weather every 10 minutes
     setInterval(fetchWeather, 600000);
