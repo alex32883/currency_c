@@ -34,8 +34,8 @@ h1 {
 
 .app-wrapper-second {
     display: grid;
-    grid-template-columns: 1fr 400px;
-    gap: 30px;
+    grid-template-columns: 1fr 1fr 400px;
+    gap: 20px;
 }
 
 .calculator-section,
@@ -43,6 +43,7 @@ h1 {
 .weather-section,
 .world-time-section,
 .notepad-section,
+.todo-section,
 .payment-calculator-section,
 .clock-panel,
 .calendar-panel {
@@ -639,6 +640,33 @@ textarea:focus {
     font-weight: 600;
 }
 
+.weather-forecast {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 2px solid #e0e0e0;
+    text-align: center;
+}
+
+.forecast-label {
+    font-size: 12px;
+    color: #666;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.forecast-temp {
+    font-size: 24px;
+    font-weight: bold;
+    color: #764ba2;
+    margin-bottom: 3px;
+}
+
+.forecast-desc {
+    font-size: 12px;
+    color: #666;
+    text-transform: capitalize;
+}
+
 .btn-refresh-weather {
     width: 100%;
     padding: 10px;
@@ -693,6 +721,210 @@ textarea:focus {
 .time-zone-date {
     font-size: 12px;
     color: #666;
+}
+
+/* Todo List Styles */
+.todo-section {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.todo-input-group {
+    display: flex;
+    gap: 10px;
+}
+
+.todo-input-group input {
+    flex: 1;
+    padding: 10px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.todo-input-group input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.btn-add-todo {
+    padding: 10px 20px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-add-todo:hover {
+    background: #5568d3;
+    transform: translateY(-2px);
+}
+
+.todo-list {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 10px;
+    background: #f8f9fa;
+}
+
+.todo-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    margin-bottom: 8px;
+    background: white;
+    border-radius: 6px;
+    border: 2px solid #e0e0e0;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.todo-item:hover {
+    border-color: #667eea;
+    box-shadow: 0 2px 5px rgba(102, 126, 234, 0.2);
+}
+
+.todo-item.selected {
+    border-color: #667eea;
+    background: #e8f0fe;
+}
+
+.todo-item input[type="checkbox"] {
+    cursor: pointer;
+}
+
+.todo-item-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.todo-item-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+}
+
+.todo-item-name.completed {
+    text-decoration: line-through;
+    color: #999;
+}
+
+.todo-item-date {
+    font-size: 11px;
+    color: #666;
+}
+
+.todo-item-status {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.todo-item-status.pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.todo-item-status.in-progress {
+    background: #cfe2ff;
+    color: #084298;
+}
+
+.todo-item-status.completed {
+    background: #d1e7dd;
+    color: #0f5132;
+}
+
+.todo-actions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.todo-action-btn {
+    padding: 8px;
+    background: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.todo-action-btn:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+}
+
+.date-picker-calendar {
+    width: 100%;
+}
+
+.date-picker-header {
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+}
+
+.date-picker-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+.date-picker-day-header {
+    text-align: center;
+    padding: 8px;
+    font-weight: 600;
+    color: #667eea;
+    background: #f0f0f0;
+    border-radius: 5px;
+    font-size: 12px;
+}
+
+.date-picker-day {
+    text-align: center;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-size: 13px;
+}
+
+.date-picker-day:hover {
+    background: #f0f0f0;
+}
+
+.date-picker-day.other-month {
+    color: #ccc;
+}
+
+.date-picker-day.today {
+    background: #667eea;
+    color: white;
+    font-weight: bold;
+}
+
+.date-picker-day.selected {
+    background: #764ba2;
+    color: white;
+    font-weight: bold;
 }
 
 /* Payment Calculator Styles */
@@ -786,6 +1018,16 @@ textarea:focus {
 @media (max-width: 1400px) {
     .app-wrapper {
         grid-template-columns: 1fr 1fr;
+    }
+    
+    .app-wrapper-second {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 1024px) {
+    .app-wrapper-second {
+        grid-template-columns: 1fr;
     }
 }
 

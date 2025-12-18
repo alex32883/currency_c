@@ -96,6 +96,11 @@
                             <span class="weather-value" id="weatherWind">-- km/h</span>
                         </div>
                     </div>
+                    <div class="weather-forecast">
+                        <div class="forecast-label">Tomorrow:</div>
+                        <div class="forecast-temp" id="tomorrowTemp">--°C</div>
+                        <div class="forecast-desc" id="tomorrowDesc">--</div>
+                    </div>
                     <button class="btn-refresh-weather" onclick="fetchWeather()">🔄 Refresh</button>
                 </div>
             </div>
@@ -123,7 +128,7 @@
             </div>
         </div>
 
-        <!-- Second Row: Notepad and Sidebar -->
+        <!-- Second Row: Notepad, Todo List and Sidebar -->
         <div class="app-wrapper-second">
             <!-- Notepad Section -->
             <div class="notepad-section">
@@ -141,6 +146,24 @@
                     <button class="clear-button" id="clearButton">🗑️ Clear</button>
                 </div>
                 <div class="message" id="message"></div>
+            </div>
+
+            <!-- Todo List Section -->
+            <div class="todo-section">
+                <h2>✅ Todo List</h2>
+                <div class="todo-input-group">
+                    <input type="text" id="todoInput" placeholder="Enter task name...">
+                    <button class="btn-add-todo" onclick="addTodo()">Add</button>
+                </div>
+                <div class="todo-list" id="todoList"></div>
+                <div class="todo-actions">
+                    <button class="todo-action-btn" onclick="editSelectedTodo()">Edit</button>
+                    <button class="todo-action-btn" onclick="setDateForTodo()">Set Date</button>
+                    <button class="todo-action-btn" onclick="setInProgress()">In Progress</button>
+                    <button class="todo-action-btn" onclick="setCompleted()">Completed</button>
+                    <button class="todo-action-btn" onclick="removeTodo()">Remove</button>
+                    <button class="todo-action-btn" onclick="exportTodos()">Export</button>
+                </div>
             </div>
 
             <!-- Sidebar with Payment Calculator and Calendar -->
@@ -197,6 +220,26 @@
             <div class="modal-footer">
                 <button class="modal-button cancel" id="cancelNote">Cancel</button>
                 <button class="modal-button save" id="saveDateNote">Save Note</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for todo date picker -->
+    <div class="modal" id="todoDateModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Select Date for Task</h2>
+                <button class="close-button" id="closeTodoDateModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="date-picker-calendar">
+                    <div class="date-picker-header" id="datePickerHeader"></div>
+                    <div class="date-picker-grid" id="datePickerGrid"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-button cancel" id="cancelTodoDate">Cancel</button>
+                <button class="modal-button save" id="saveTodoDate">Set Date</button>
             </div>
         </div>
     </div>

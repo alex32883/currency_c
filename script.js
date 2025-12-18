@@ -583,11 +583,13 @@ async function fetchWeather() {
     const weatherFeelsLike = document.getElementById('weatherFeelsLike');
     const weatherHumidity = document.getElementById('weatherHumidity');
     const weatherWind = document.getElementById('weatherWind');
+    const tomorrowTemp = document.getElementById('tomorrowTemp');
+    const tomorrowDesc = document.getElementById('tomorrowDesc');
     
     // Point-Claire, QC coordinates: 45.4487° N, 73.8169° W
     // Using Open-Meteo free API (no API key required)
     try {
-        const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=45.4487&longitude=-73.8169&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&timezone=America/Toronto');
+        const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=45.4487&longitude=-73.8169&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=America/Toronto&forecast_days=2');
         const data = await response.json();
         
         if (data && data.current) {
@@ -631,6 +633,17 @@ async function fetchWeather() {
             if (weatherFeelsLike) weatherFeelsLike.textContent = `${feelsLike}°C`;
             if (weatherHumidity) weatherHumidity.textContent = `${humidity}%`;
             if (weatherWind) weatherWind.textContent = `${windSpeed} km/h`;
+            
+            // Tomorrow's forecast
+            if (data.daily && data.daily.temperature_2m_max && data.daily.temperature_2m_max.length > 1) {
+                const tomorrowMax = Math.round(data.daily.temperature_2m_max[1]);
+                const tomorrowMin = Math.round(data.daily.temperature_2m_min[1]);
+                const tomorrowCode = data.daily.weather_code[1];
+                const tomorrowDescription = weatherDescriptions[tomorrowCode] || 'Unknown';
+                
+                if (tomorrowTemp) tomorrowTemp.textContent = `${tomorrowMax}°/${tomorrowMin}°C`;
+                if (tomorrowDesc) tomorrowDesc.textContent = tomorrowDescription;
+            }
         }
     } catch (error) {
         console.error('Error fetching weather:', error);
@@ -639,6 +652,8 @@ async function fetchWeather() {
         if (weatherFeelsLike) weatherFeelsLike.textContent = '--°C';
         if (weatherHumidity) weatherHumidity.textContent = '--%';
         if (weatherWind) weatherWind.textContent = '-- km/h';
+        if (tomorrowTemp) tomorrowTemp.textContent = '--°C';
+        if (tomorrowDesc) tomorrowDesc.textContent = '--';
     }
 }
 
@@ -730,6 +745,378 @@ function updateWorldTimes() {
         console.error('Error updating Ottawa time:', error);
     }
 }
+
+// ==================== Todo List Functionality ====================
+const TODO_STORAGE_KEY = 'todoList';
+let todos = [];
+let selectedTodoId = null;
+let todoDatePickerDate = null;
+
+// Load todos from localStorage
+function loadTodos() {
+    const stored = localStorage.getItem(TODO_STORAGE_KEY);
+    todos = stored ? JSON.parse(stored) : [];
+    renderTodos();
+}
+
+// Save todos to localStorage
+function saveTodos() {
+    localStorage.setItem(TODO_STORAGE_KEY, JSON.stringify(todos));
+    renderTodos();
+}
+
+// Generate unique ID
+function generateTodoId() {
+    return Date.now().toString(36) + Math.random().toString(36).substr(2);
+}
+
+// Add new todo
+function addTodo() {
+    const input = document.getElementById('todoInput');
+    const taskName = input.value.trim();
+    
+    if (!taskName) {
+        alert('Please enter a task name');
+        return;
+    }
+    
+    const newTodo = {
+        id: generateTodoId(),
+        name: taskName,
+        status: 'pending',
+        date: null,
+        createdAt: new Date().toISOString()
+    };
+    
+    todos.push(newTodo);
+    saveTodos();
+    input.value = '';
+    selectedTodoId = null;
+}
+
+// Render todos
+function renderTodos() {
+    const todoList = document.getElementById('todoList');
+    if (!todoList) return;
+    
+    todoList.innerHTML = '';
+    
+    if (todos.length === 0) {
+        todoList.innerHTML = '<div style="text-align: center; color: #999; padding: 20px;">No tasks yet. Add a task to get started!</div>';
+        return;
+    }
+    
+    todos.forEach(todo => {
+        const todoItem = document.createElement('div');
+        todoItem.className = `todo-item ${selectedTodoId === todo.id ? 'selected' : ''}`;
+        todoItem.onclick = () => selectTodo(todo.id);
+        
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = todo.status === 'completed';
+        checkbox.onchange = () => toggleTodoStatus(todo.id);
+        
+        const content = document.createElement('div');
+        content.className = 'todo-item-content';
+        
+        const name = document.createElement('div');
+        name.className = `todo-item-name ${todo.status === 'completed' ? 'completed' : ''}`;
+        name.textContent = todo.name;
+        
+        const meta = document.createElement('div');
+        meta.style.display = 'flex';
+        meta.style.gap = '10px';
+        meta.style.alignItems = 'center';
+        
+        if (todo.date) {
+            const dateSpan = document.createElement('span');
+            dateSpan.className = 'todo-item-date';
+            const date = new Date(todo.date);
+            dateSpan.textContent = `📅 ${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+            meta.appendChild(dateSpan);
+        }
+        
+        const statusSpan = document.createElement('span');
+        statusSpan.className = `todo-item-status ${todo.status}`;
+        statusSpan.textContent = todo.status.charAt(0).toUpperCase() + todo.status.slice(1).replace('-', ' ');
+        meta.appendChild(statusSpan);
+        
+        content.appendChild(name);
+        content.appendChild(meta);
+        
+        todoItem.appendChild(checkbox);
+        todoItem.appendChild(content);
+        todoList.appendChild(todoItem);
+    });
+}
+
+// Select todo
+function selectTodo(id) {
+    selectedTodoId = id;
+    renderTodos();
+}
+
+// Toggle todo status
+function toggleTodoStatus(id) {
+    const todo = todos.find(t => t.id === id);
+    if (todo) {
+        todo.status = todo.status === 'completed' ? 'pending' : 'completed';
+        saveTodos();
+    }
+}
+
+// Edit selected todo
+function editSelectedTodo() {
+    if (!selectedTodoId) {
+        alert('Please select a task to edit');
+        return;
+    }
+    
+    const todo = todos.find(t => t.id === selectedTodoId);
+    if (!todo) return;
+    
+    const newName = prompt('Edit task name:', todo.name);
+    if (newName && newName.trim()) {
+        todo.name = newName.trim();
+        saveTodos();
+    }
+}
+
+// Set date for selected todo
+function setDateForTodo() {
+    if (!selectedTodoId) {
+        alert('Please select a task to set a date');
+        return;
+    }
+    
+    const todo = todos.find(t => t.id === selectedTodoId);
+    if (!todo) return;
+    
+    // Open date picker modal
+    const modal = document.getElementById('todoDateModal');
+    if (modal) {
+        todoDatePickerDate = todo.date ? new Date(todo.date) : new Date();
+        generateDatePicker();
+        modal.classList.add('show');
+    }
+}
+
+// Generate date picker calendar
+function generateDatePicker() {
+    const header = document.getElementById('datePickerHeader');
+    const grid = document.getElementById('datePickerGrid');
+    if (!header || !grid) return;
+    
+    const now = new Date();
+    const year = todoDatePickerDate.getFullYear();
+    const month = todoDatePickerDate.getMonth();
+    
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDayOfWeek = firstDay.getDay();
+    
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                      'July', 'August', 'September', 'October', 'November', 'December'];
+    
+    header.textContent = `${monthNames[month]} ${year}`;
+    grid.innerHTML = '';
+    
+    // Day headers
+    const dayHeaders = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    dayHeaders.forEach(day => {
+        const header = document.createElement('div');
+        header.className = 'date-picker-day-header';
+        header.textContent = day;
+        grid.appendChild(header);
+    });
+    
+    // Empty cells
+    for (let i = 0; i < startingDayOfWeek; i++) {
+        const emptyDay = document.createElement('div');
+        emptyDay.className = 'date-picker-day other-month';
+        grid.appendChild(emptyDay);
+    }
+    
+    // Days
+    const today = now.getDate();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+    
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dayElement = document.createElement('div');
+        dayElement.className = 'date-picker-day';
+        dayElement.textContent = day;
+        
+        if (day === today && month === currentMonth && year === currentYear) {
+            dayElement.classList.add('today');
+        }
+        
+        const selectedDate = todoDatePickerDate.getDate();
+        const selectedMonth = todoDatePickerDate.getMonth();
+        const selectedYear = todoDatePickerDate.getFullYear();
+        
+        if (day === selectedDate && month === selectedMonth && year === selectedYear) {
+            dayElement.classList.add('selected');
+        }
+        
+        dayElement.onclick = () => {
+            todoDatePickerDate = new Date(year, month, day);
+            generateDatePicker();
+        };
+        
+        grid.appendChild(dayElement);
+    }
+}
+
+// Save todo date
+function saveTodoDate() {
+    if (!selectedTodoId) return;
+    
+    const todo = todos.find(t => t.id === selectedTodoId);
+    if (todo && todoDatePickerDate) {
+        todo.date = todoDatePickerDate.toISOString();
+        saveTodos();
+        closeTodoDateModal();
+    }
+}
+
+// Close todo date modal
+function closeTodoDateModal() {
+    const modal = document.getElementById('todoDateModal');
+    if (modal) {
+        modal.classList.remove('show');
+    }
+    todoDatePickerDate = null;
+}
+
+// Set in progress
+function setInProgress() {
+    if (!selectedTodoId) {
+        alert('Please select a task');
+        return;
+    }
+    
+    const todo = todos.find(t => t.id === selectedTodoId);
+    if (todo) {
+        todo.status = 'in-progress';
+        saveTodos();
+    }
+}
+
+// Set completed
+function setCompleted() {
+    if (!selectedTodoId) {
+        alert('Please select a task');
+        return;
+    }
+    
+    const todo = todos.find(t => t.id === selectedTodoId);
+    if (todo) {
+        todo.status = 'completed';
+        saveTodos();
+    }
+}
+
+// Remove todo
+function removeTodo() {
+    if (!selectedTodoId) {
+        alert('Please select a task to remove');
+        return;
+    }
+    
+    if (confirm('Are you sure you want to remove this task?')) {
+        todos = todos.filter(t => t.id !== selectedTodoId);
+        selectedTodoId = null;
+        saveTodos();
+    }
+}
+
+// Export todos
+function exportTodos() {
+    if (todos.length === 0) {
+        alert('No tasks to export');
+        return;
+    }
+    
+    let exportText = 'TODO LIST EXPORT\n';
+    exportText += '==================\n\n';
+    exportText += `Generated: ${new Date().toLocaleString()}\n\n`;
+    
+    const statusGroups = {
+        'pending': todos.filter(t => t.status === 'pending'),
+        'in-progress': todos.filter(t => t.status === 'in-progress'),
+        'completed': todos.filter(t => t.status === 'completed')
+    };
+    
+    ['pending', 'in-progress', 'completed'].forEach(status => {
+        const group = statusGroups[status];
+        if (group.length > 0) {
+            exportText += `${status.toUpperCase().replace('-', ' ')}:\n`;
+            group.forEach(todo => {
+                exportText += `  - ${todo.name}`;
+                if (todo.date) {
+                    const date = new Date(todo.date);
+                    exportText += ` (Due: ${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })})`;
+                }
+                exportText += '\n';
+            });
+            exportText += '\n';
+        }
+    });
+    
+    // Create and download file
+    const blob = new Blob([exportText], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `todo-list-${new Date().toISOString().split('T')[0]}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+// Initialize todo list on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadTodos();
+    
+    // Todo date modal event listeners
+    const closeTodoDateModalBtn = document.getElementById('closeTodoDateModal');
+    const cancelTodoDateBtn = document.getElementById('cancelTodoDate');
+    const saveTodoDateBtn = document.getElementById('saveTodoDate');
+    const todoDateModal = document.getElementById('todoDateModal');
+    
+    if (closeTodoDateModalBtn) {
+        closeTodoDateModalBtn.addEventListener('click', closeTodoDateModal);
+    }
+    
+    if (cancelTodoDateBtn) {
+        cancelTodoDateBtn.addEventListener('click', closeTodoDateModal);
+    }
+    
+    if (saveTodoDateBtn) {
+        saveTodoDateBtn.addEventListener('click', saveTodoDate);
+    }
+    
+    if (todoDateModal) {
+        todoDateModal.addEventListener('click', (e) => {
+            if (e.target.id === 'todoDateModal') {
+                closeTodoDateModal();
+            }
+        });
+    }
+    
+    // Enter key to add todo
+    const todoInput = document.getElementById('todoInput');
+    if (todoInput) {
+        todoInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                addTodo();
+            }
+        });
+    }
+});
 
 // Initialize weather and world times on page load
 document.addEventListener('DOMContentLoaded', function() {
