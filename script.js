@@ -5,14 +5,54 @@ let previousInput = '';
 let operator = '';
 let shouldResetDisplay = false;
 
-// Exchange rates (base: USD)
-// These rates are approximate and should be updated with real-time data
-const exchangeRates = {
+// Exchange rates (base: USD) - populated from live API, fallback to static rates
+let exchangeRates = {
     USD: 1.0,
-    CAD: 1.35,    // 1 USD = 1.35 CAD
-    RUB: 92.0,    // 1 USD = 92 RUB
-    UAH: 37.0     // 1 USD = 37 UAH
+    CAD: 1.35,
+    RUB: 92.0,
+    UAH: 37.0
 };
+
+const CURRENCY_API_URL = 'https://latest.currency-api.pages.dev/v1/currencies/usd.json';
+let ratesLastUpdated = null;
+let ratesLoading = false;
+
+// Fetch live exchange rates from API
+async function fetchExchangeRates() {
+    if (ratesLoading) return;
+    ratesLoading = true;
+    const statusEl = document.getElementById('ratesStatus');
+    if (statusEl) statusEl.textContent = 'Updating rates...';
+
+    try {
+        const response = await fetch(CURRENCY_API_URL);
+        const data = await response.json();
+
+        if (data && data.usd) {
+            const usdRates = data.usd;
+            exchangeRates = {
+                USD: 1.0,
+                CAD: usdRates.cad ?? exchangeRates.CAD,
+                RUB: usdRates.rub ?? exchangeRates.RUB,
+                UAH: usdRates.uah ?? exchangeRates.UAH
+            };
+            ratesLastUpdated = data.date || new Date().toISOString().split('T')[0];
+            if (statusEl) {
+                statusEl.textContent = `Live rates • ${ratesLastUpdated}`;
+                statusEl.title = 'Rates from currency-api.pages.dev';
+            }
+        }
+    } catch (error) {
+        console.warn('Currency API unavailable, using fallback rates:', error.message);
+        if (statusEl) {
+            statusEl.textContent = 'Using cached rates';
+            statusEl.title = 'Live rates unavailable - using approximate values';
+        }
+    } finally {
+        ratesLoading = false;
+        convertCurrency();
+    }
+}
 
 function updateDisplay() {
     display.value = currentInput;
@@ -167,8 +207,11 @@ document.getElementById('amount').addEventListener('input', convertCurrency);
 document.getElementById('fromCurrency').addEventListener('change', convertCurrency);
 document.getElementById('toCurrency').addEventListener('change', convertCurrency);
 
-// Initialize currency conversion on page load
-window.addEventListener('load', convertCurrency);
+// Initialize currency conversion: show fallback first, then fetch live rates
+window.addEventListener('load', () => {
+    convertCurrency(); // Immediate conversion with fallback rates
+    fetchExchangeRates();
+});
 
 // Keyboard support for calculator
 document.addEventListener('keydown', function(event) {
@@ -224,17 +267,30 @@ function saveDateNotes(notes) {
 
 let dateNotes = getDateNotes();
 let currentSelectedDate = null;
+let calendarViewDate = new Date(); // Tracks which month the calendar is displaying
 
 // Format date as YYYY-MM-DD
 function formatDate(year, month, day) {
     return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 }
 
+// Navigate calendar to previous or next month
+function navigateCalendar(delta) {
+    calendarViewDate.setMonth(calendarViewDate.getMonth() + delta);
+    generateCalendar();
+}
+
+// Go to today's month
+function goToTodayMonth() {
+    calendarViewDate = new Date();
+    generateCalendar();
+}
+
 // Calendar functionality
 function generateCalendar() {
     const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth();
+    const year = calendarViewDate.getFullYear();
+    const month = calendarViewDate.getMonth();
     
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
@@ -246,7 +302,12 @@ function generateCalendar() {
     
     const calendarHeader = document.getElementById('calendarHeader');
     if (calendarHeader) {
-        calendarHeader.textContent = `${monthNames[month]} ${year}`;
+        calendarHeader.innerHTML = `
+            <button class="calendar-nav-btn" onclick="navigateCalendar(-1)" title="Previous month">‹</button>
+            <span class="calendar-month-year">${monthNames[month]} ${year}</span>
+            <button class="calendar-nav-btn" onclick="navigateCalendar(1)" title="Next month">›</button>
+            <button class="calendar-today-btn" onclick="goToTodayMonth()" title="Go to current month">Today</button>
+        `;
     }
     
     const calendarGrid = document.getElementById('calendarGrid');
@@ -271,7 +332,8 @@ function generateCalendar() {
     }
     
     // Days of the month
-    const today = now.getDate();
+    const todayDate = now.getDate();
+    const isCurrentMonth = now.getFullYear() === year && now.getMonth() === month;
     for (let day = 1; day <= daysInMonth; day++) {
         const dayElement = document.createElement('div');
         dayElement.className = 'calendar-day';
@@ -279,7 +341,7 @@ function generateCalendar() {
         
         const dateKey = formatDate(year, month, day);
         
-        if (day === today) {
+        if (isCurrentMonth && day === todayDate) {
             dayElement.classList.add('today');
         }
         

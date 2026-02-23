@@ -70,6 +70,10 @@
                         </select>
                     </div>
                     <button class="btn-convert" onclick="convertCurrency()">Convert</button>
+                    <div class="rates-status">
+                        <span id="ratesStatus" class="rates-status-text">Loading rates...</span>
+                        <button class="btn-refresh-rates" onclick="fetchExchangeRates()" title="Refresh exchange rates">🔄</button>
+                    </div>
                 </div>
             </div>
 
